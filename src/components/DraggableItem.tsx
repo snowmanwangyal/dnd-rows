@@ -1,7 +1,7 @@
 import React from 'react';
 import { useDraggable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
-import { Paper, Text } from '@mantine/core';
+import { Box, Text } from '@mantine/core';
 import type { GridItem } from '../types/grid';
 
 interface DraggableItemProps {
@@ -32,22 +32,26 @@ export const DraggableItem: React.FC<DraggableItemProps> = ({ item }) => {
   };
 
   return (
-    <Paper
+    <Box
       ref={setNodeRef}
       style={style}
       {...attributes}
       {...listeners}
       p="sm"
-      radius="md"
-      shadow="sm"
       bg={item.color || 'blue.1'}
       sx={{
         cursor: 'grab',
         border: isCurrentlyDragging ? '2px dashed #228be6' : '1px solid #e9ecef',
+        borderRadius: '4px',
         transition: 'all 0.2s ease',
+        minHeight: '40px',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
         '&:hover': {
-          shadow: 'md',
+          borderColor: '#228be6',
           transform: 'translateY(-1px)',
+          boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
         },
         '&:active': {
           cursor: 'grabbing',
@@ -60,6 +64,6 @@ export const DraggableItem: React.FC<DraggableItemProps> = ({ item }) => {
       <Text size="xs" c="dimmed">
         {item.width}/12 cols
       </Text>
-    </Paper>
+    </Box>
   );
 };

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Container, Title, Paper, Group, Button, Text, Stack } from '@mantine/core';
+import { Container, Title, Paper, Group, Button, Text, Stack, Box } from '@mantine/core';
 import { DragDropGrid } from './DragDropGrid';
 import type { GridRow } from '../types/grid';
 
@@ -98,7 +98,7 @@ export const Demo: React.FC = () => {
           </Text>
         </div>
 
-        <Paper p="md" radius="md" withBorder>
+        <Box>
           <Group mb="md">
             <Button onClick={addSampleData} size="sm">
               Add Sample Row
@@ -115,7 +115,7 @@ export const Demo: React.FC = () => {
             initialRows={rows}
             onRowsChange={handleRowsChange}
           />
-        </Paper>
+        </Box>
 
         <Paper p="md" radius="md" withBorder>
           <Title order={3} mb="md">
