@@ -3,6 +3,7 @@
   margin: 0;
   padding: 0;
   min-height: 100vh;
+  background-color: #f8f9fa;
 }
 
 body {
@@ -13,8 +14,27 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: #f8f9fa;
 }
 
 * {
   box-sizing: border-box;
 }
+<<<<<<< Current (Your changes)
+=======
+
+/* Drag and drop styles */
+.dragging {
+  opacity: 0.5;
+  transform: rotate(5deg);
+}
+
+.drop-zone {
+  transition: all 0.2s ease;
+}
+
+.drop-zone.drag-over {
+  border-color: #228be6 !important;
+  background-color: #f8f9fa !important;
+}
+>>>>>>> Incoming (Background Agent changes)

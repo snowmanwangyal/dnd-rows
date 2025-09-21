@@ -1,13 +1,13 @@
-import { MantineProvider } from '@mantine/core';
-import { Demo } from './components/Demo';
-import './App.css';
+import { MantineProvider } from "@mantine/core";
+import "./App.css";
+import { Dashboard } from "./components/Dashboard";
 
 function App() {
   return (
     <MantineProvider>
-      <Demo />
+      <Dashboard />
     </MantineProvider>
   );
 }
 
-export default App
+export default App;
