@@ -2,7 +2,7 @@ import React, { useState, useCallback } from 'react';
 import {
   DndContext,
   DragOverlay,
-  closestCenter,
+  closestCorners,
   PointerSensor,
   useSensor,
   useSensors,
@@ -52,9 +52,10 @@ export const DragDropGrid: React.FC<DragDropGridProps> = ({
     if (over) {
       const overId = over.id as string;
       if (overId.startsWith('drop-')) {
-        const parts = overId.split('-');
-        const rowId = parts[1];
-        setDraggedOverRow(rowId);
+        const overData = over.data.current;
+        if (overData) {
+          setDraggedOverRow(overData.rowId);
+        }
       }
     } else {
       setDraggedOverRow(null);
@@ -72,17 +73,18 @@ export const DragDropGrid: React.FC<DragDropGridProps> = ({
     const activeId = active.id as string;
     const overId = over.id as string;
 
+
     if (overId.startsWith('drop-')) {
-      const parts = overId.split('-');
-      const rowId = parts[1];
-      const position = parts[2];
-      const targetPosition = parseInt(position, 10);
-      
-      // Check if this is a new row creation
-      if (rowId === 'new-row') {
-        createNewRowWithItem(activeId);
-      } else {
-        moveItemToPosition(activeId, rowId, targetPosition);
+      const overData = over.data.current;
+      if (overData) {
+        const { rowId, position, isNewRow } = overData;
+        
+        // Check if this is a new row creation
+        if (isNewRow) {
+          createNewRowWithItem(activeId);
+        } else {
+          moveItemToPosition(activeId, rowId, position);
+        }
       }
     }
   }, []);
@@ -203,7 +205,7 @@ export const DragDropGrid: React.FC<DragDropGridProps> = ({
   return (
     <DndContext
       sensors={sensors}
-      collisionDetection={closestCenter}
+      collisionDetection={closestCorners}
       onDragStart={handleDragStart}
       onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}

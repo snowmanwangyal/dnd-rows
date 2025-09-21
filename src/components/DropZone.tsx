@@ -32,23 +32,24 @@ export const DropZone: React.FC<DropZoneProps> = ({
       ref={setNodeRef}
       sx={{
         minHeight: '60px',
-        minWidth: '40px',
         border: isActive && canDrop 
           ? '2px dashed #228be6' 
-          : '2px dashed transparent',
-        borderRadius: '8px',
+          : '1px dashed transparent',
+        borderRadius: '4px',
         backgroundColor: isActive && canDrop 
           ? '#e7f5ff' 
-          : 'transparent',
+          : isActive 
+            ? '#f8f9fa'
+            : 'transparent',
         transition: 'all 0.2s ease',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         position: 'relative',
-        flex: '0 0 auto',
+        cursor: canDrop ? 'pointer' : 'default',
         '&:hover': {
-          borderColor: canDrop ? '#228be6' : 'transparent',
-          backgroundColor: canDrop ? '#f8f9fa' : 'transparent',
+          borderColor: canDrop ? '#228be6' : '#dee2e6',
+          backgroundColor: canDrop ? '#e7f5ff' : '#f8f9fa',
         },
       }}
     >
@@ -59,14 +60,15 @@ export const DropZone: React.FC<DropZoneProps> = ({
             top: '50%',
             left: '50%',
             transform: 'translate(-50%, -50%)',
-            fontSize: '12px',
+            fontSize: '10px',
             color: '#228be6',
             fontWeight: 500,
             pointerEvents: 'none',
             whiteSpace: 'nowrap',
+            zIndex: 2,
           }}
         >
-          Drop here
+          Drop
         </Box>
       )}
     </Box>

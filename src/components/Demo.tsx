@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Container, Title, Paper, Group, Button, Text, Stack } from '@mantine/core';
+import { Container, Title, Paper, Group, Button, Text, Stack, Tabs } from '@mantine/core';
 import { DragDropGrid } from './DragDropGrid';
+import { SimpleDragTest } from './SimpleDragTest';
 import type { GridRow } from '../types/grid';
 
 const initialData: GridRow[] = [
@@ -98,24 +99,39 @@ export const Demo: React.FC = () => {
           </Text>
         </div>
 
-        <Paper p="md" radius="md" withBorder>
-          <Group mb="md">
-            <Button onClick={addSampleData} size="sm">
-              Add Sample Row
-            </Button>
-            <Button onClick={resetToInitial} size="sm" variant="light">
-              Reset to Initial
-            </Button>
-            <Text size="sm" c="dimmed">
-              Total items: {rows.reduce((acc, row) => acc + row.items.length, 0)}
-            </Text>
-          </Group>
+        <Tabs defaultValue="main" variant="outline">
+          <Tabs.List>
+            <Tabs.Tab value="main">Main Grid</Tabs.Tab>
+            <Tabs.Tab value="test">Simple Test</Tabs.Tab>
+          </Tabs.List>
 
-          <DragDropGrid
-            initialRows={rows}
-            onRowsChange={handleRowsChange}
-          />
-        </Paper>
+          <Tabs.Panel value="main" pt="md">
+            <Paper p="md" radius="md" withBorder>
+              <Group mb="md">
+                <Button onClick={addSampleData} size="sm">
+                  Add Sample Row
+                </Button>
+                <Button onClick={resetToInitial} size="sm" variant="light">
+                  Reset to Initial
+                </Button>
+                <Text size="sm" c="dimmed">
+                  Total items: {rows.reduce((acc, row) => acc + row.items.length, 0)}
+                </Text>
+              </Group>
+
+              <DragDropGrid
+                initialRows={rows}
+                onRowsChange={handleRowsChange}
+              />
+            </Paper>
+          </Tabs.Panel>
+
+          <Tabs.Panel value="test" pt="md">
+            <Paper p="md" radius="md" withBorder>
+              <SimpleDragTest />
+            </Paper>
+          </Tabs.Panel>
+        </Tabs>
 
         <Paper p="md" radius="md" withBorder>
           <Title order={3} mb="md">

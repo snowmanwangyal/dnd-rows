@@ -62,47 +62,39 @@ export const GridRow: React.FC<GridRowProps> = ({
 
       <Box
         sx={{
-          display: 'flex',
-          flexWrap: 'wrap',
+          display: 'grid',
+          gridTemplateColumns: 'repeat(12, 1fr)',
           gap: '4px',
           minHeight: '80px',
           alignItems: 'center',
         }}
       >
-        {/* Drop zone at the beginning */}
-        <DropZone
-          dropZone={{
-            rowId: row.id,
-            position: 0,
-          }}
-          isOver={isOver}
-          canDrop={canDrop}
-        />
+        {/* Create drop zones for each column position */}
+        {Array.from({ length: 13 }, (_, index) => (
+          <DropZone
+            key={`drop-${row.id}-${index}`}
+            dropZone={{
+              rowId: row.id,
+              position: index,
+            }}
+            isOver={isOver}
+            canDrop={canDrop}
+          />
+        ))}
 
-        {/* Render items with drop zones between them */}
-        {itemPositions.map((itemPos, index) => (
-          <React.Fragment key={itemPos.item.id}>
-            <Box
-              sx={{
-                width: `${(itemPos.item.width / 12) * 100}%`,
-                minWidth: '60px',
-                display: 'flex',
-                alignItems: 'center',
-              }}
-            >
-              <DraggableItem item={itemPos.item} />
-            </Box>
-            
-            {/* Drop zone after each item */}
-            <DropZone
-              dropZone={{
-                rowId: row.id,
-                position: index + 1,
-              }}
-              isOver={isOver}
-              canDrop={canDrop}
-            />
-          </React.Fragment>
+        {/* Render items at their calculated positions */}
+        {itemPositions.map((itemPos) => (
+          <Box
+            key={itemPos.item.id}
+            sx={{
+              gridColumn: `span ${itemPos.item.width}`,
+              display: 'flex',
+              alignItems: 'center',
+              zIndex: 1,
+            }}
+          >
+            <DraggableItem item={itemPos.item} />
+          </Box>
         ))}
       </Box>
     </Paper>
