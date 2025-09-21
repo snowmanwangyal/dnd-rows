@@ -31,44 +31,64 @@ export const DropZone: React.FC<DropZoneProps> = ({
     <Box
       ref={setNodeRef}
       sx={{
-        minHeight: '60px',
-        minWidth: '40px',
-        border: isActive && canDrop 
-          ? '2px dashed #228be6' 
-          : '2px dashed transparent',
-        borderRadius: '8px',
-        backgroundColor: isActive && canDrop 
-          ? '#e7f5ff' 
-          : 'transparent',
-        transition: 'all 0.2s ease',
+        minHeight: dropZone.isNewRow ? '40px' : '60px',
+        minWidth: dropZone.isNewRow ? '100%' : '8px',
+        position: 'relative',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        position: 'relative',
         flex: '0 0 auto',
-        '&:hover': {
-          borderColor: canDrop ? '#228be6' : 'transparent',
-          backgroundColor: canDrop ? '#f8f9fa' : 'transparent',
-        },
+        transition: 'all 0.2s ease',
       }}
     >
-      {isActive && canDrop && (
+      {/* Vertical highlight indicator for between items */}
+      {isActive && canDrop && !dropZone.isNewRow && (
+        <Box
+          sx={{
+            position: 'absolute',
+            top: '0',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            width: '4px',
+            height: '100%',
+            backgroundColor: '#228be6',
+            borderRadius: '2px',
+            boxShadow: '0 0 8px rgba(34, 139, 230, 0.5)',
+            zIndex: 5,
+          }}
+        />
+      )}
+
+      {/* Horizontal highlight indicator for between rows */}
+      {isActive && canDrop && dropZone.isNewRow && (
         <Box
           sx={{
             position: 'absolute',
             top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            fontSize: '12px',
-            color: '#228be6',
-            fontWeight: 500,
-            pointerEvents: 'none',
-            whiteSpace: 'nowrap',
+            left: '0',
+            right: '0',
+            transform: 'translateY(-50%)',
+            height: '4px',
+            backgroundColor: '#228be6',
+            borderRadius: '2px',
+            boxShadow: '0 0 8px rgba(34, 139, 230, 0.5)',
+            zIndex: 5,
           }}
-        >
-          Drop here
-        </Box>
+        />
       )}
+      
+      {/* Invisible drop area */}
+      <Box
+        sx={{
+          position: 'absolute',
+          top: '0',
+          left: '0',
+          right: '0',
+          bottom: '0',
+          minWidth: dropZone.isNewRow ? '100%' : '20px',
+          zIndex: 1,
+        }}
+      />
     </Box>
   );
 };

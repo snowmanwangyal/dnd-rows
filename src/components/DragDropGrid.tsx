@@ -164,7 +164,7 @@ export const DragDropGrid: React.FC<DragDropGridProps> = ({
     onRowsChange?.(newRows);
   };
 
-  const addNewItem = (rowId: string) => {
+  const addNewItem = (rowId: string, position: 'start' | 'end' = 'end') => {
     const newItemId = `item-${Date.now()}`;
     const newItem: GridItem = {
       id: newItemId,
@@ -173,23 +173,27 @@ export const DragDropGrid: React.FC<DragDropGridProps> = ({
       color: `hsl(${Math.random() * 360}, 70%, 80%)`,
     };
 
-    const newRows = rows.map(row => 
-      row.id === rowId 
-        ? { ...row, items: [...row.items, newItem] }
-        : row
-    );
+    const newRows = rows.map(row => {
+      if (row.id === rowId) {
+        const items = position === 'start' 
+          ? [newItem, ...row.items]
+          : [...row.items, newItem];
+        return { ...row, items };
+      }
+      return row;
+    });
 
     setRows(newRows);
     onRowsChange?.(newRows);
   };
 
-  const deleteRow = (rowId: string) => {
-    if (rows.length <= 1) return; // Keep at least one row
+  // const deleteRow = (rowId: string) => {
+  //   if (rows.length <= 1) return; // Keep at least one row
     
-    const newRows = rows.filter(row => row.id !== rowId);
-    setRows(newRows);
-    onRowsChange?.(newRows);
-  };
+  //   const newRows = rows.filter(row => row.id !== rowId);
+  //   setRows(newRows);
+  //   onRowsChange?.(newRows);
+  // };
 
   const deleteItem = (itemId: string) => {
     const newRows = rows.map(row => ({
@@ -218,7 +222,7 @@ export const DragDropGrid: React.FC<DragDropGridProps> = ({
           </Text>
         </Group>
 
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 'md' }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: '16px', padding: '0 40px' }}>
           {rows.map((row, index) => (
             <Box key={row.id} sx={{ position: 'relative' }}>
               <GridRow
@@ -226,33 +230,16 @@ export const DragDropGrid: React.FC<DragDropGridProps> = ({
                 onItemMove={(itemId, _fromRowId, toRowId, toPosition) => moveItemToPosition(itemId, toRowId, toPosition)}
                 onItemResize={() => {}} // TODO: Implement resizing
                 onItemDelete={deleteItem}
+                onAddItem={addNewItem}
                 isOver={draggedOverRow === row.id}
                 canDrop={!!activeItem}
+                isLastRow={index === rows.length - 1}
+                onAddNewRow={addNewRow}
               />
-              
-              <Group mt="xs" spacing="xs">
-                <Button
-                  size="xs"
-                  variant="light"
-                  onClick={() => addNewItem(row.id)}
-                >
-                  + Add Item
-                </Button>
-                {rows.length > 1 && (
-                  <Button
-                    size="xs"
-                    variant="light"
-                    color="red"
-                    onClick={() => deleteRow(row.id)}
-                  >
-                    Delete Row
-                  </Button>
-                )}
-              </Group>
 
               {/* Drop zone below each row for creating new rows */}
               {index === rows.length - 1 && (
-                <Box mt="md">
+                <Box mt="16px" sx={{ position: 'relative' }}>
                   <DropZoneComponent
                     dropZone={{
                       rowId: 'new-row',
@@ -262,9 +249,6 @@ export const DragDropGrid: React.FC<DragDropGridProps> = ({
                     isOver={draggedOverRow === 'new-row'}
                     canDrop={!!activeItem}
                   />
-                  <Text size="sm" c="dimmed" ta="center" mt="xs">
-                    + Drop here to create new row
-                  </Text>
                 </Box>
               )}
             </Box>
