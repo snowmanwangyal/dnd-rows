@@ -1,69 +1,121 @@
-# React + TypeScript + Vite
+# Drag-and-Drop Dashboard Component
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A custom React component built with Mantine V6 and dnd-kit that provides a 12-column grid system with drag-and-drop functionality for dashboard layouts.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **12-Column Grid System**: Each row contains 12 equal-width columns for precise item positioning
+- **Vertical Drag-and-Drop**: Move items between different rows
+- **Horizontal Positioning**: Position items at specific column positions within rows
+- **Visual Feedback**: Highlighted drop zones show available positions during drag operations
+- **Responsive Design**: Built with Mantine components for consistent styling
+- **TypeScript Support**: Fully typed for better development experience
 
-## Expanding the ESLint configuration
+## Installation
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+pnpm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Dependencies
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- React 19.1.1
+- Mantine V6 (@mantine/core, @mantine/hooks, @mantine/notifications)
+- dnd-kit (@dnd-kit/core, @dnd-kit/sortable, @dnd-kit/utilities)
+- Vite (build tool)
 
-export default defineConfig([
-  globalIgnores(['dist']),
+## Usage
+
+```tsx
+import DashboardGrid, { type DashboardItem, type DashboardRow } from './components/DashboardGrid';
+
+const initialRows: DashboardRow[] = [
   {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
+    id: 'row-1',
+    items: [
+      {
+        id: 'item-1',
+        content: <div>Your content here</div>,
+        span: 4, // Spans 4 columns
+        rowId: 'row-1',
+        position: 0, // Starts at column 0
       },
-      // other options...
-    },
+    ],
   },
-])
+];
+
+function MyDashboard() {
+  const handleLayoutChange = (newRows: DashboardRow[]) => {
+    console.log('Layout changed:', newRows);
+  };
+
+  return (
+    <DashboardGrid
+      initialRows={initialRows}
+      onLayoutChange={handleLayoutChange}
+    />
+  );
+}
 ```
+
+## Component API
+
+### DashboardGrid Props
+
+| Prop | Type | Description |
+|------|------|-------------|
+| `initialRows` | `DashboardRow[]` | Initial layout configuration |
+| `onLayoutChange` | `(rows: DashboardRow[]) => void` | Callback when layout changes |
+| `className` | `string` | Additional CSS class |
+
+### DashboardRow Interface
+
+```tsx
+interface DashboardRow {
+  id: string;
+  items: DashboardItem[];
+}
+```
+
+### DashboardItem Interface
+
+```tsx
+interface DashboardItem {
+  id: string;
+  content: React.ReactNode;
+  span: number; // Number of columns (1-12)
+  rowId: string;
+  position: number; // Column position (0-11)
+}
+```
+
+## Development
+
+```bash
+# Start development server
+pnpm dev
+
+# Build for production
+pnpm build
+
+# Preview production build
+pnpm preview
+```
+
+## Key Features Implementation
+
+1. **Grid System**: Uses CSS flexbox with `calc(8.333% - 8px)` for 12 equal columns
+2. **Drag-and-Drop**: Implemented with dnd-kit for smooth interactions
+3. **Visual Feedback**: Blue dashed borders highlight available drop zones
+4. **Type Safety**: Full TypeScript support with proper interfaces
+5. **Accessibility**: Keyboard navigation support via dnd-kit
+
+## Browser Support
+
+- Modern browsers with ES6+ support
+- React 19+ compatible
+- CSS Grid and Flexbox support required
+
+## License
+
+MIT
