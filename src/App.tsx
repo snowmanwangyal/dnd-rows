@@ -1,11 +1,11 @@
 import { MantineProvider } from '@mantine/core';
-import { Demo } from './components/Demo';
+import { Dashboard } from './components/Dashboard';
 import './App.css';
 
 function App() {
   return (
     <MantineProvider>
-      <Demo />
+      <Dashboard />
     </MantineProvider>
   );
 }

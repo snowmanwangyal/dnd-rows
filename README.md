@@ -1,74 +1,34 @@
-# Drag & Drop Grid Component POC
+# Dashboard Drag & Drop Demo
 
-A flexible drag and drop grid system built with React, TypeScript, Mantine V6, and dnd-kit. This component allows you to create a 12-column grid layout where items can be dragged between rows and positions, with the ability to create new rows dynamically.
+A modern dashboard with draggable cards built with React, TypeScript, Mantine V6, and dnd-kit. This demo showcases a Mixpanel-like dashboard where cards can be dragged and reordered within rows and moved between different rows.
 
 ## Features
 
-- ✅ **12-column grid system** with flexible item widths (1-12 columns)
-- ✅ **Drag and drop** items between rows and positions
-- ✅ **Create new rows** by dropping items below the last row
-- ✅ **Visual feedback** during drag operations
-- ✅ **Add/remove rows and items** dynamically
-- ✅ **Responsive design** with Mantine V6 components
+- ✅ **Draggable cards** that can be reordered within rows
+- ✅ **Move cards between rows** by dragging them to different sections
+- ✅ **Visual feedback** during drag operations with drag overlay
+- ✅ **Add new cards** to any row dynamically
+- ✅ **Add new rows** to organize cards
+- ✅ **Modern UI** with Mantine V6 components
 - ✅ **TypeScript support** with full type safety
+- ✅ **Responsive design** that works on all screen sizes
 
 ## Installation
 
 ```bash
-pnpm add @mantine/core@6 @mantine/hooks@6 @dnd-kit/core @dnd-kit/sortable @dnd-kit/utilities
+npm install @mantine/core@6 @mantine/hooks@6 @dnd-kit/core @dnd-kit/sortable @dnd-kit/utilities
 ```
 
 ## Usage
 
 ```tsx
-import { DragDropGrid } from './components/DragDropGrid';
-import type { GridRow } from './types/grid';
-
-const initialRows: GridRow[] = [
-  {
-    id: 'row-1',
-    items: [
-      {
-        id: 'item-1',
-        content: 'Header',
-        width: 12,
-        color: 'hsl(200, 70%, 80%)',
-      },
-    ],
-  },
-  {
-    id: 'row-2',
-    items: [
-      {
-        id: 'item-2',
-        content: 'Sidebar',
-        width: 3,
-        color: 'hsl(120, 70%, 80%)',
-      },
-      {
-        id: 'item-3',
-        content: 'Main Content',
-        width: 6,
-        color: 'hsl(30, 70%, 80%)',
-      },
-      {
-        id: 'item-4',
-        content: 'Widget',
-        width: 3,
-        color: 'hsl(280, 70%, 80%)',
-      },
-    ],
-  },
-];
+import { Dashboard } from './components/Dashboard';
 
 function App() {
-  const [rows, setRows] = useState<GridRow[]>(initialRows);
-
   return (
-    <DragDropGrid
-      initialRows={rows}
-      onRowsChange={setRows}
-    />
+    <MantineProvider>
+      <Dashboard />
+    </MantineProvider>
   );
 }
 ```
@@ -77,53 +37,54 @@ function App() {
 
 ### Core Components
 
-- **`DragDropGrid`** - Main container component with drag and drop context
-- **`GridRow`** - Individual row component with 12-column layout
-- **`DraggableItem`** - Draggable item component with configurable width
-- **`DropZone`** - Drop zone component for positioning items
+- **`Dashboard`** - Main container with drag and drop context
+- **`DashboardRow`** - Individual row component for organizing cards
+- **`DashboardCard`** - Draggable card component with different types
 
 ### Types
 
 ```typescript
-interface GridItem {
+interface DashboardCard {
   id: string;
+  title: string;
   content: string;
-  width: number; // 1-12 columns
-  color?: string;
+  type: 'chart' | 'metric' | 'table' | 'list';
+  color: string;
 }
 
-interface GridRow {
+interface DashboardRow {
   id: string;
-  items: GridItem[];
+  title: string;
+  cards: DashboardCard[];
 }
 ```
 
 ## Key Features Explained
 
-### 12-Column Grid System
-Each row is divided into 12 columns, and items can occupy any number of columns (1-12). Items are positioned using flexbox with percentage-based widths.
-
 ### Drag and Drop
-- Items can be dragged between any position within a row
-- Items can be moved between different rows
-- Visual feedback shows valid drop zones during drag operations
+- **Reorder within rows**: Drag cards to reorder them within the same row
+- **Move between rows**: Drag cards to different rows to reorganize your dashboard
+- **Visual feedback**: See drag overlay and drop zone highlighting during operations
 
-### Row Creation
-- Drop items below the last row to create a new row
-- New rows are automatically created with the dropped item
+### Card Types
+- **Metrics**: Display key numbers and statistics
+- **Charts**: Visual data representations
+- **Tables**: Structured data display
+- **Lists**: Itemized information
 
 ### Dynamic Management
-- Add new items to any row using the "Add Item" button
-- Add new empty rows using the "Add Row" button
-- Delete rows (minimum of 1 row is maintained)
+- **Add cards**: Click "Add Card" button in any row
+- **Add rows**: Click "Add New Row" to create new sections
+- **Edit cards**: Click the edit icon on any card (placeholder functionality)
 
 ## Styling
 
-The component uses Mantine V6's styling system with:
-- Consistent spacing and typography
-- Hover and active states for interactive elements
-- Visual feedback during drag operations
-- Responsive design principles
+The dashboard uses Mantine V6's design system with:
+- Clean, modern card layouts
+- Color-coded card types
+- Smooth drag and drop animations
+- Responsive grid system
+- Professional dashboard appearance
 
 ## Browser Support
 
@@ -135,22 +96,29 @@ The component uses Mantine V6's styling system with:
 
 ```bash
 # Install dependencies
-pnpm install
+npm install
 
 # Start development server
-pnpm dev
+npm run dev
 
 # Build for production
-pnpm build
+npm run build
 ```
 
-## Integration with Secoda
+## Demo Features
 
-This component is designed to be easily integrated into your Secoda application. The drag and drop functionality allows users to:
+This demo includes:
+1. **Pre-populated data** with sample cards in different categories
+2. **Interactive drag and drop** - try dragging cards around!
+3. **Add functionality** - add new cards and rows
+4. **Visual feedback** - see the drag overlay and drop zones
+5. **Responsive design** - works on desktop and mobile
 
-1. **Organize data views** by dragging components between rows
-2. **Create custom layouts** with flexible column arrangements
-3. **Build responsive dashboards** that adapt to different screen sizes
-4. **Manage complex UI layouts** with intuitive drag and drop interactions
+## Getting Started
 
-The component provides a solid foundation for building more complex layout management features in your Secoda app.
+1. Clone the repository
+2. Run `npm install` to install dependencies
+3. Run `npm run dev` to start the development server
+4. Open your browser and start dragging cards around!
+
+The dashboard is ready to use and can be easily customized for your specific needs.
