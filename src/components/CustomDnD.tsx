@@ -48,7 +48,7 @@ function SortableItem<T>({
     isDragging,
   } = useSortable({ 
     id: getItemId(item),
-    animateLayoutChanges: () => true,
+    animateLayoutChanges: () => false, // Disable animations to prevent shifting
   });
 
   const activeIndex = layout.findIndex((l) => l.id === getItemId(item));
@@ -59,9 +59,9 @@ function SortableItem<T>({
     : undefined;
 
   const itemStyle = {
-    opacity: isDragging ? 0.5 : 1,
-    transform: CSS.Transform.toString(transform),
-    transition,
+    opacity: isDragging ? 0.3 : 1, // Make dragged item more transparent
+    transform: isDragging ? 'none' : CSS.Transform.toString(transform), // No transform during drag
+    transition: isDragging ? 'none' : transition, // Disable transitions during drag
   };
 
   const wrapperClasses = classNames(styles.itemWrapper, {
@@ -128,6 +128,7 @@ function DroppableRow<T>({
       <SortableContext
         items={items.map(getItemId)}
         strategy={horizontalListSortingStrategy}
+        disabled={false}
       >
         {items.map((item) => (
           <SortableItem
