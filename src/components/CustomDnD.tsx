@@ -5,17 +5,13 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
-  closestCenter,
+  rectIntersection,
 } from "@dnd-kit/core";
 import type {
   DragEndEvent,
   DragOverEvent,
   DragStartEvent,
 } from "@dnd-kit/core";
-import {
-  SortableContext,
-  horizontalListSortingStrategy,
-} from "@dnd-kit/sortable";
 import type { CustomDnDProps, DropIndicatorProps } from "../types/custom-dnd";
 
 // Drop Indicator Component
@@ -217,7 +213,7 @@ export function CustomDnD<T>({
   return (
     <DndContext
       sensors={sensors}
-      collisionDetection={closestCenter}
+      collisionDetection={rectIntersection}
       onDragStart={handleDragStart}
       onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}
@@ -237,12 +233,7 @@ export function CustomDnD<T>({
                 alignItems: "flex-start",
               }}
             >
-              <SortableContext
-                items={(rowItems as T[]).map(getItemId)}
-                strategy={horizontalListSortingStrategy}
-              >
-                {(rowItems as T[]).map((item) => renderItem(item))}
-              </SortableContext>
+              {(rowItems as T[]).map((item) => renderItem(item))}
             </div>
           );
         })}

@@ -1,6 +1,5 @@
 import { Paper, Text, Badge, Group, ActionIcon } from "@mantine/core";
-import { useSortable } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
+import { useDraggable } from "@dnd-kit/core";
 import type { DashboardCard as DashboardCardType } from "../types/dashboard";
 
 interface DashboardCardProps {
@@ -16,15 +15,11 @@ export function DashboardCardComponent({
     attributes,
     listeners,
     setNodeRef,
-    transform,
-    transition,
-    isDragging: isSortableDragging,
-  } = useSortable({ id: card.id });
+    isDragging: isDraggableDragging,
+  } = useDraggable({ id: card.id });
 
   const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isSortableDragging ? 0.5 : 1,
+    opacity: isDraggableDragging ? 0.5 : 1,
   };
 
 
@@ -55,7 +50,7 @@ export function DashboardCardComponent({
         boxShadow: isDragging
           ? "0 4px 12px rgba(0, 0, 0, 0.15)"
           : "0 1px 3px rgba(0, 0, 0, 0.1)",
-        transform: isDragging ? "rotate(5deg)" : style.transform,
+        transform: isDragging ? "rotate(5deg)" : undefined,
       }}
       p="md"
       {...attributes}
