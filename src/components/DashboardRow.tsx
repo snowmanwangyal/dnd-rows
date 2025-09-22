@@ -1,11 +1,10 @@
-import React from "react";
 import { Paper, Title, Button, Group, Text } from "@mantine/core";
 import { useDroppable } from "@dnd-kit/core";
 import {
   SortableContext,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { DashboardRow as DashboardRowType } from "../types/dashboard";
+import type { DashboardRow as DashboardRowType } from "../types/dashboard";
 import { DashboardCardComponent } from "./DashboardCard";
 
 interface DashboardRowProps {
@@ -29,7 +28,7 @@ export function DashboardRowComponent({ row, onAddCard }: DashboardRowProps) {
         minHeight: "120px",
       }}
     >
-      <Group justify="space-between" mb="md">
+      <Group mb="md" style={{ justifyContent: "space-between" }}>
         <Title order={3}>{row.title}</Title>
         <Button size="xs" variant="outline" onClick={onAddCard}>
           Add Card
