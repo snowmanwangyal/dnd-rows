@@ -1,11 +1,11 @@
 import React from "react";
-import { Paper, Title, Button, Group, Text } from "@mantine/core";
+import { Title, Button, Group, Text } from "@mantine/core";
 import { useDroppable } from "@dnd-kit/core";
 import {
   SortableContext,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { DashboardRow as DashboardRowType } from "../types/dashboard";
+import type { DashboardRow as DashboardRowType } from "../types/dashboard";
 import { DashboardCardComponent } from "./DashboardCard";
 
 interface DashboardRowProps {
@@ -19,14 +19,13 @@ export function DashboardRowComponent({ row, onAddCard }: DashboardRowProps) {
   });
 
   return (
-    <Paper
+    <div
       ref={setNodeRef}
-      p="md"
-      shadow="sm"
       style={{
-        border: isOver ? "2px dashed #228be6" : "1px solid #e9ecef",
-        backgroundColor: isOver ? "#f8f9fa" : "white",
         minHeight: "120px",
+        padding: "1rem",
+        border: isOver ? "2px dashed #228be6" : "none",
+        backgroundColor: isOver ? "#f8f9fa" : "transparent",
       }}
     >
       <Group justify="space-between" mb="md">
@@ -52,6 +51,6 @@ export function DashboardRowComponent({ row, onAddCard }: DashboardRowProps) {
           </div>
         </SortableContext>
       )}
-    </Paper>
+    </div>
   );
 }
