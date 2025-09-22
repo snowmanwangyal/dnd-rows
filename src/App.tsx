@@ -1,11 +1,11 @@
 import { MantineProvider } from "@mantine/core";
 import "./App.css";
-import { Dashboard } from "./components/Dashboard";
+import { GridExample } from "./components/GridExample";
 
 function App() {
   return (
     <MantineProvider>
-      <Dashboard />
+      <GridExample />
     </MantineProvider>
   );
 }
