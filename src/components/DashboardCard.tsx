@@ -1,8 +1,6 @@
-import React from "react";
 import { Paper, Text, Badge, Group, ActionIcon } from "@mantine/core";
-import { useSortable } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
-import { DashboardCard as DashboardCardType } from "../types/dashboard";
+import { useDraggable } from "@dnd-kit/core";
+import type { DashboardCard as DashboardCardType } from "../types/dashboard";
 
 interface DashboardCardProps {
   card: DashboardCardType;
@@ -17,29 +15,13 @@ export function DashboardCardComponent({
     attributes,
     listeners,
     setNodeRef,
-    transform,
-    transition,
-    isDragging: isSortableDragging,
-  } = useSortable({ id: card.id });
+    isDragging: isDraggableDragging,
+  } = useDraggable({ id: card.id });
 
   const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isSortableDragging ? 0.5 : 1,
+    opacity: isDraggableDragging ? 0.5 : 1,
   };
 
-  const getCardColor = (color: string) => {
-    const colors: Record<string, string> = {
-      blue: "#228be6",
-      green: "#51cf66",
-      orange: "#ff922b",
-      purple: "#9775fa",
-      cyan: "#22d3ee",
-      pink: "#f783ac",
-      gray: "#868e96",
-    };
-    return colors[color] || colors.gray;
-  };
 
   const getTypeIcon = (type: string) => {
     switch (type) {
@@ -68,13 +50,13 @@ export function DashboardCardComponent({
         boxShadow: isDragging
           ? "0 4px 12px rgba(0, 0, 0, 0.15)"
           : "0 1px 3px rgba(0, 0, 0, 0.1)",
-        transform: isDragging ? "rotate(5deg)" : style.transform,
+        transform: isDragging ? "rotate(5deg)" : undefined,
       }}
       p="md"
       {...attributes}
       {...listeners}
     >
-      <Group justify="space-between" mb="xs">
+      <Group mb="xs" style={{ justifyContent: "space-between" }}>
         <Text fw={600} size="sm" truncate>
           {card.title}
         </Text>
@@ -87,12 +69,12 @@ export function DashboardCardComponent({
         {card.content}
       </Text>
 
-      <Group justify="flex-end" mt="xs">
+      <Group mt="xs" style={{ justifyContent: "flex-end" }}>
         <ActionIcon
           size="xs"
           variant="subtle"
           color="gray"
-          onClick={(e) => {
+          onClick={(e: React.MouseEvent) => {
             e.stopPropagation();
             // Handle edit action
           }}
