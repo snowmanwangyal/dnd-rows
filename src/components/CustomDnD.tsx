@@ -32,7 +32,8 @@ const DropIndicator: React.FC<DropIndicatorProps> = ({
     <div
       style={{
         position: "absolute",
-        height: "4px",
+        width: "4px",
+        height: "100%",
         backgroundColor: "#228be6",
         borderRadius: "2px",
         zIndex: 1000,
@@ -141,9 +142,9 @@ export function CustomDnD<T>({
     const indicatorStyle: React.CSSProperties = {
       top: `${overRow * (rowHeight + gap)}px`,
       left: shouldShowBefore 
-        ? `${overIndex * (200 + gap)}px` 
-        : `${(overIndex + 1) * (200 + gap)}px`,
-      width: "200px",
+        ? `${overIndex * (200 + gap) - 2}px` 
+        : `${(overIndex + 1) * (200 + gap) - 2}px`,
+      height: `${rowHeight}px`,
     };
 
     setDropIndicator({
