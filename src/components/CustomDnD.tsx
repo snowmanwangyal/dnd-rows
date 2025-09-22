@@ -5,13 +5,20 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
-  rectIntersection,
+  closestCenter,
 } from "@dnd-kit/core";
 import type {
   DragEndEvent,
   DragOverEvent,
   DragStartEvent,
 } from "@dnd-kit/core";
+import {
+  SortableContext,
+  horizontalListSortingStrategy,
+  useSortable,
+} from "@dnd-kit/sortable";
+import { useDroppable } from "@dnd-kit/core";
+import { CSS } from "@dnd-kit/utilities";
 import type { CustomDnDProps, DropIndicatorProps } from "../types/custom-dnd";
 
 // Drop Indicator Component
@@ -39,6 +46,95 @@ const DropIndicator: React.FC<DropIndicatorProps> = ({
     />
   );
 };
+
+// Sortable Item Component
+function SortableItem<T>({
+  item,
+  renderItem,
+  getItemId,
+}: {
+  item: T;
+  renderItem: (item: T, isDragging?: boolean) => React.ReactNode;
+  getItemId: (item: T) => string;
+}) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: getItemId(item) });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+    >
+      {renderItem(item, isDragging)}
+    </div>
+  );
+}
+
+// Droppable Row Component
+function DroppableRow<T>({
+  row,
+  items,
+  renderItem,
+  getItemId,
+  rowHeight,
+  gap,
+}: {
+  row: number;
+  items: T[];
+  renderItem: (item: T, isDragging?: boolean) => React.ReactNode;
+  getItemId: (item: T) => string;
+  rowHeight: number;
+  gap: number;
+}) {
+  const { setNodeRef, isOver } = useDroppable({
+    id: `row-${row}`,
+  });
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={{
+        display: "flex",
+        gap: `${gap}px`,
+        marginBottom: `${gap}px`,
+        minHeight: `${rowHeight}px`,
+        alignItems: "flex-start",
+        padding: "8px",
+        border: isOver ? "2px dashed #228be6" : "2px dashed transparent",
+        borderRadius: "8px",
+        backgroundColor: isOver ? "#f0f8ff" : "transparent",
+      }}
+    >
+      <SortableContext
+        items={items.map(getItemId)}
+        strategy={horizontalListSortingStrategy}
+      >
+        {items.map((item) => (
+          <SortableItem
+            key={getItemId(item)}
+            item={item}
+            renderItem={renderItem}
+            getItemId={getItemId}
+          />
+        ))}
+      </SortableContext>
+    </div>
+  );
+}
 
 // Generic CustomDnD Component
 export function CustomDnD<T>({
@@ -113,6 +209,23 @@ export function CustomDnD<T>({
     const activeId = active.id as string;
     const overId = over.id as string;
 
+    // Check if we're over a row
+    if (overId.startsWith('row-')) {
+      const row = parseInt(overId.replace('row-', ''));
+      setDropIndicator({
+        isVisible: true,
+        position: 'after',
+        row,
+        order: 0,
+        style: {
+          top: `${row * (rowHeight + gap)}px`,
+          left: '0px',
+          height: `${rowHeight}px`,
+        },
+      });
+      return;
+    }
+
     // Find the active item's layout
     const activeLayout = layout.find((l) => l.id === activeId);
     if (!activeLayout) return;
@@ -166,9 +279,23 @@ export function CustomDnD<T>({
 
     // Find layouts
     const activeLayout = layout.find((l) => l.id === activeId);
+    if (!activeLayout) return;
+
+    // Check if we're dropping on a row
+    if (overId.startsWith('row-')) {
+      const targetRow = parseInt(overId.replace('row-', ''));
+      const newLayout = layout.map((item) => {
+        if (item.id === activeId) {
+          return { ...item, row: targetRow, order: 0 };
+        }
+        return item;
+      });
+      onLayoutChange(newLayout);
+      return;
+    }
+
     const overLayout = layout.find((l) => l.id === overId);
-    
-    if (!activeLayout || !overLayout) return;
+    if (!overLayout) return;
 
     const activeRow = activeLayout.row;
     const overRow = overLayout.row;
@@ -213,7 +340,7 @@ export function CustomDnD<T>({
   return (
     <DndContext
       sensors={sensors}
-      collisionDetection={rectIntersection}
+      collisionDetection={closestCenter}
       onDragStart={handleDragStart}
       onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}
@@ -223,18 +350,15 @@ export function CustomDnD<T>({
           const row = parseInt(rowKey);
           
           return (
-            <div
+            <DroppableRow
               key={row}
-              style={{
-                display: "flex",
-                gap: `${gap}px`,
-                marginBottom: `${gap}px`,
-                minHeight: `${rowHeight}px`,
-                alignItems: "flex-start",
-              }}
-            >
-              {(rowItems as T[]).map((item) => renderItem(item))}
-            </div>
+              row={row}
+              items={rowItems as T[]}
+              renderItem={renderItem}
+              getItemId={getItemId}
+              rowHeight={rowHeight}
+              gap={gap}
+            />
           );
         })}
 

@@ -1,5 +1,4 @@
 import { Paper, Text, Badge, Group, ActionIcon } from "@mantine/core";
-import { useDraggable } from "@dnd-kit/core";
 import type { DashboardCard as DashboardCardType } from "../types/dashboard";
 
 interface DashboardCardProps {
@@ -11,16 +10,6 @@ export function DashboardCardComponent({
   card,
   isDragging = false,
 }: DashboardCardProps) {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    isDragging: isDraggableDragging,
-  } = useDraggable({ id: card.id });
-
-  const style = {
-    opacity: isDraggableDragging ? 0.5 : 1,
-  };
 
 
   const getTypeIcon = (type: string) => {
@@ -40,9 +29,7 @@ export function DashboardCardComponent({
 
   return (
     <Paper
-      ref={setNodeRef}
       style={{
-        ...style,
         width: "200px",
         minHeight: "120px",
         cursor: "grab",
@@ -53,8 +40,6 @@ export function DashboardCardComponent({
         transform: isDragging ? "rotate(5deg)" : undefined,
       }}
       p="md"
-      {...attributes}
-      {...listeners}
     >
       <Group mb="xs" style={{ justifyContent: "space-between" }}>
         <Text fw={600} size="sm" truncate>
