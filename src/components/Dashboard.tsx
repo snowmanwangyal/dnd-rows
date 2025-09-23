@@ -98,6 +98,12 @@ export function Dashboard() {
     const overRow = findRowById(overId);
     const overCard = findCardById(overId);
 
+    // Check if dropping on a dropzone
+    if (overId.startsWith('dropzone-')) {
+      handleDropOnDropzone(active.id as string, overId);
+      return;
+    }
+
     if (overCard) {
       // Dropping on another card - reorder within same row
       const activeRow = findRowContainingCard(active.id as string);
@@ -177,7 +183,7 @@ export function Dashboard() {
       });
 
       // Add card to target row at specific position
-      return updatedRows.map((row) => {
+      const finalRows = updatedRows.map((row) => {
         if (row.id === targetRowId && cardToMove) {
           const overIndex = row.cards.findIndex(
             (card) => card.id === overCardId
@@ -188,6 +194,9 @@ export function Dashboard() {
         }
         return row;
       });
+
+      // Remove empty rows
+      return finalRows.filter((row) => row.cards.length > 0);
     });
   };
 
@@ -209,12 +218,15 @@ export function Dashboard() {
       });
 
       // Add card to end of target row
-      return updatedRows.map((row) => {
+      const finalRows = updatedRows.map((row) => {
         if (row.id === targetRowId && cardToMove) {
           return { ...row, cards: [...row.cards, cardToMove] };
         }
         return row;
       });
+
+      // Remove empty rows
+      return finalRows.filter((row) => row.cards.length > 0);
     });
   };
 
@@ -243,6 +255,95 @@ export function Dashboard() {
     setRows((prevRows) => [...prevRows, newRow]);
   };
 
+  const handleDropOnDropzone = (cardId: string, dropzoneId: string) => {
+    const activeRow = findRowContainingCard(cardId);
+    if (!activeRow) return;
+
+    // Handle end dropzone
+    if (dropzoneId === 'dropzone-end') {
+      const newRow: DashboardRow = {
+        id: `row-${Date.now()}`,
+        title: "New Row",
+        cards: [],
+      };
+
+      setRows((prevRows) => {
+        let cardToMove: DashboardCard | null = null;
+        
+        // Remove card from source row
+        const updatedRows = prevRows.map((row) => {
+          if (row.cards.some((card) => card.id === cardId)) {
+            const cardIndex = row.cards.findIndex((card) => card.id === cardId);
+            cardToMove = row.cards[cardIndex];
+            return {
+              ...row,
+              cards: row.cards.filter((card) => card.id !== cardId),
+            };
+          }
+          return row;
+        });
+
+        // Add new row with the moved card at the end
+        if (cardToMove) {
+          newRow.cards = [cardToMove];
+          updatedRows.push(newRow);
+        }
+
+        // Remove empty rows
+        return updatedRows.filter((row) => row.cards.length > 0);
+      });
+      return;
+    }
+
+    // Extract row ID from dropzone ID
+    const rowId = dropzoneId.replace('dropzone-above-', '').replace('dropzone-below-', '');
+    const isAbove = dropzoneId.includes('above');
+    
+    // Create new row
+    const newRow: DashboardRow = {
+      id: `row-${Date.now()}`,
+      title: "New Row",
+      cards: [],
+    };
+
+    setRows((prevRows) => {
+      let cardToMove: DashboardCard | null = null;
+      
+      // Remove card from source row
+      const updatedRows = prevRows.map((row) => {
+        if (row.cards.some((card) => card.id === cardId)) {
+          const cardIndex = row.cards.findIndex((card) => card.id === cardId);
+          cardToMove = row.cards[cardIndex];
+          return {
+            ...row,
+            cards: row.cards.filter((card) => card.id !== cardId),
+          };
+        }
+        return row;
+      });
+
+      // Add new row with the moved card
+      if (cardToMove) {
+        newRow.cards = [cardToMove];
+        
+        const targetIndex = updatedRows.findIndex((row) => row.id === rowId);
+        if (targetIndex !== -1) {
+          const insertIndex = isAbove ? targetIndex : targetIndex + 1;
+          updatedRows.splice(insertIndex, 0, newRow);
+        } else {
+          updatedRows.push(newRow);
+        }
+      }
+
+      // Remove empty rows
+      return updatedRows.filter((row) => row.cards.length > 0);
+    });
+  };
+
+  const removeEmptyRows = () => {
+    setRows((prevRows) => prevRows.filter((row) => row.cards.length > 0));
+  };
+
   return (
     <Container size="xl" py="md">
       <Group justify="space-between" mb="xl">
@@ -253,14 +354,27 @@ export function Dashboard() {
       </Group>
 
       <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-        <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-          {rows.map((row) => (
+        <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+          {rows.map((row, index) => (
             <DashboardRowComponent
               key={row.id}
               row={row}
               onAddCard={() => addNewCard(row.id)}
+              showDropzoneAbove={index > 0}
+              showDropzoneBelow={index < rows.length - 1}
+              isFirstRow={index === 0}
+              isLastRow={index === rows.length - 1}
             />
           ))}
+          
+          {/* Dropzone at the very end for creating new row at bottom */}
+          {rows.length > 0 && (
+            <Dropzone
+              id="dropzone-end"
+              position="below"
+              isVisible={true}
+            />
+          )}
         </div>
 
         <DragOverlay>
